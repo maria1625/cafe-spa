@@ -1,36 +1,51 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useAuth } from "../../context/AuthContext";
+
+const schema = z.object({
+  email: z.string().email("Correo inválido"),
+  password: z.string().min(6, "Mínimo 6 caracteres"),
+});
 
 const LoginForm = () => {
   const { login } = useAuth();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    login({ email, password });
+  const onSubmit = async (data) => {
+    await new Promise((res) => setTimeout(res, 1000)); 
+    login(data);
     alert("Login exitoso");
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      
       <input
         type="email"
         placeholder="Correo"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        {...register("email")}
       />
+      {errors.email && <p>{errors.email.message}</p>}
 
       <input
         type="password"
         placeholder="Contraseña"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        {...register("password")}
       />
+      {errors.password && <p>{errors.password.message}</p>}
 
-      <button type="submit">Ingresar</button>
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Cargando..." : "Ingresar"}
+      </button>
+      
     </form>
   );
 };
