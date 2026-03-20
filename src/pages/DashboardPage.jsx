@@ -1,176 +1,101 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { Coffee, TrendingUp, ShoppingBag, Star } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { fetchCoffees } from "../services/coffeeService";
-import CoffeeList from "../components/coffee/CoffeeList";
-import Loader from "../components/ui/Loader";
-import ErrorMessage from "../components/ui/ErrorMessage";
 
 /**
  * DashboardPage
- * Página principal del catálogo — diseño exacto del Figma (Mockup_SPA.zip).
- * Estados: loading → <Loader /> | error → <ErrorMessage /> | ok → catálogo
+ * Diseño EXACTO del nuevo Figma (Mockup_SPA_Catálogo_Café.zip).
+ * Sin shadcn/ui — solo divs con Tailwind.
  */
 const DashboardPage = () => {
   const { user } = useAuth();
 
-  const [coffees, setCoffees]     = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [error, setError]         = useState(null);
-  const [onlyAvailable, setOnlyAvailable] = useState(false);
-  const [sortBy, setSortBy]       = useState("default");
+  const stats = [
+    { icon: ShoppingBag, label: "Pedidos realizados",  value: "12",  color: "bg-[#6D4C41]" },
+    { icon: Star,        label: "Favoritos",            value: "8",   color: "bg-[#8D6E63]" },
+    { icon: TrendingUp,  label: "Puntos acumulados",    value: "340", color: "bg-[#5D4037]" },
+  ];
 
-  const loadCoffees = useCallback(async () => {
-    try {
-      setError(null);
-      setLoading(true);
-      const data = await fetchCoffees();
-      setCoffees(data);
-    } catch (err) {
-      setError(err.message || "Error desconocido al cargar los cafés.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const activity = [
+    { action: "Pedido realizado",       item: "Ethiopian Yirgacheffe", date: "15 Mar 2026" },
+    { action: "Agregado a favoritos",   item: "Italian Espresso",      date: "10 Mar 2026" },
+    { action: "Valoración enviada",     item: "Colombian Supremo",     date: "05 Mar 2026" },
+  ];
 
-  useEffect(() => {
-    loadCoffees();
-  }, [loadCoffees]);
-
-  /* ── Filtro + ordenamiento (sin nueva petición) ── */
-  const filteredCoffees = useMemo(() => {
-    let result = [...coffees];
-
-    if (onlyAvailable) {
-      result = result.filter((c) => c.available);
-    }
-
-    switch (sortBy) {
-      case "price-asc":
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case "price-desc":
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case "rating":
-        result.sort((a, b) => b.rating - a.rating);
-        break;
-      case "popular":
-        result.sort((a, b) => b.votes - a.votes);
-        break;
-      default:
-        break;
-    }
-
-    return result;
-  }, [coffees, onlyAvailable, sortBy]);
-
-  const handleClearFilters = () => {
-    setOnlyAvailable(false);
-    setSortBy("default");
-  };
-
-  /* ── Estado: cargando ── */
-  if (loading) return <Loader />;
-
-  /* ── Estado: error ── */
-  if (error) {
-    return <ErrorMessage onRetry={loadCoffees} />;
-  }
-
-  /* ── Estado: éxito ── */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-[#F5F5F5]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        {/* ── Encabezado centrado ── */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-amber-950 mb-3">
-            Explora las mejores marcas de café
-          </h1>
-          <p className="text-lg text-amber-800">
-            Descubre nuestra selección premium de cafés de especialidad
+        {/* ── Hero banner ── */}
+        <div className="bg-gradient-to-r from-[#3E2723] to-[#5D4037] rounded-xl p-8 mb-8 text-white shadow-xl">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="bg-white/20 rounded-full p-3">
+              <Coffee className="w-10 h-10" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold">
+                ¡Bienvenido, {user?.name}!
+              </h1>
+              <p className="text-white/80 mt-1">
+                Tu espacio personal en CaféHub
+              </p>
+            </div>
+          </div>
+          <p className="text-white/90">
+            Explora nuestro catálogo de cafés premium y encuentra tu mezcla perfecta
           </p>
-          {user?.name && (
-            <p className="mt-2 text-sm text-amber-600">
-              Bienvenido,{" "}
-              <span className="font-semibold">{user.name}</span> ☕
-            </p>
-          )}
         </div>
 
-        {/* ── Barra de filtros ── */}
-        <div className="w-full bg-[#FEF7ED] border border-orange-200/40 rounded-lg shadow-sm px-6 py-4 mb-6">
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+        {/* ── Stats grid ── */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {stats.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <div
+                key={index}
+                className="bg-white rounded-xl border border-[#D7CCC8] hover:shadow-lg transition-shadow"
+              >
+                <div className="flex flex-row items-center justify-between px-5 pt-5 pb-2">
+                  <p className="text-sm font-medium text-[#6D4C41]">
+                    {stat.label}
+                  </p>
+                  <div className={`${stat.color} rounded-full p-2`}>
+                    <Icon className="w-4 h-4 text-white" />
+                  </div>
+                </div>
+                <div className="px-5 pb-5">
+                  <p className="text-3xl font-bold text-[#3E2723]">
+                    {stat.value}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-            {/* Checkbox solo disponibles */}
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={onlyAvailable}
-                onChange={(e) => setOnlyAvailable(e.target.checked)}
-                className="w-4 h-4 accent-orange-600 cursor-pointer"
-              />
-              <span className="text-sm text-gray-700">Solo disponibles</span>
-            </label>
-
-            {/* Select ordenar */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="text-sm border border-orange-200/60 bg-white text-gray-700 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer"
-            >
-              <option value="default">Ordenar por</option>
-              <option value="popular">Más popular</option>
-              <option value="price-asc">Precio menor a mayor</option>
-              <option value="price-desc">Precio mayor a menor</option>
-              <option value="rating">Mejor rating</option>
-            </select>
-
-            {/* Limpiar filtros */}
-            <button
-              onClick={handleClearFilters}
-              className="ml-auto text-sm text-orange-700 hover:text-orange-800 hover:bg-orange-100/50 px-3 py-1.5 rounded-md transition-colors duration-200"
-            >
-              Limpiar filtros
-            </button>
+        {/* ── Actividad reciente ── */}
+        <div className="bg-white rounded-xl border border-[#D7CCC8]">
+          <div className="px-6 py-5 border-b border-[#EFEBE9]">
+            <h2 className="text-lg font-semibold text-[#3E2723]">
+              Actividad Reciente
+            </h2>
+          </div>
+          <div className="px-6 py-2">
+            {activity.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between py-3 border-b border-[#EFEBE9] last:border-0"
+              >
+                <div>
+                  <p className="font-medium text-[#3E2723]">{item.action}</p>
+                  <p className="text-sm text-[#6D4C41]">{item.item}</p>
+                </div>
+                <span className="text-sm text-[#8D6E63]">{item.date}</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ── Indicador de resultados ── */}
-        <p className="text-sm text-amber-700 mb-4">
-          Mostrando{" "}
-          <span className="font-semibold">{filteredCoffees.length}</span>{" "}
-          de{" "}
-          <span className="font-semibold">{coffees.length}</span> cafés
-        </p>
-
-        {/* ── Grid de cafés ── */}
-        <CoffeeList coffees={filteredCoffees} />
-
-        {/* ── Empty state con filtros activos ── */}
-        {filteredCoffees.length === 0 && coffees.length > 0 && (
-          <div className="text-center py-12">
-            <p className="text-xl text-amber-700">
-              No se encontraron cafés con los filtros seleccionados
-            </p>
-            <button
-              onClick={handleClearFilters}
-              className="mt-4 text-sm text-orange-600 underline hover:text-orange-800"
-            >
-              Limpiar filtros
-            </button>
-          </div>
-        )}
-      </main>
-
-      {/* ── Footer ── */}
-      <footer className="bg-amber-900 text-amber-50 mt-8 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm">
-            © 2026 CoffeeHub — Explorando las mejores marcas de café del mundo
-          </p>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 };
