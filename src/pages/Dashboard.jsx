@@ -1,66 +1,36 @@
-import { useForm } from "react-hook-form";
-import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
-const LoginForm = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const [error, setError] = useState(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm();
+const Dashboard = () => {
+  const { user } = useAuth();
 
-  const onSubmit = async (data) => {
-    setError(null);
+   return (
+    <div>
+      <h1>Bienvenida {user?.name}</h1>
+      <p>Este es tu dashboard ☕</p>
+   </div>
+ );
+};
 
-    await new Promise((res) => setTimeout(res, 1000));
-
-    const success = login(data);
-
-    if (success) {
-      navigate("/dashboard");
-    } else {
-      setError("Correo o contraseña incorrectos");
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <h2 className="text-2xl font-bold text-center text-[#6b4f4f]">
-        Iniciar Sesión
-      </h2>
-
-      <input
-        type="email"
-        placeholder="Correo"
-        {...register("email", { required: true })}
-        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6b4f4f]"
-      />
-
-      <input
-        type="password"
-        placeholder="Contraseña"
-        {...register("password", { required: true })}
-        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6b4f4f]"
-      />
-
-      {error && (
-        <p className="text-red-500 text-sm text-center">{error}</p>
-      )}
-
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full bg-[#6b4f4f] text-white py-2 rounded-lg hover:bg-[#5a3f3f] transition"
-      >
-        {isSubmitting ? "Cargando..." : "Ingresar"}
-      </button>
-    </form>
-  );
+const styles = {
+  container: {
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "20px",
+  },
+  header: {
+    textAlign: "center",
+    marginBottom: "30px",
+  },
+  title: {
+    margin: "20px 0 10px 0",
+    fontSize: "28px",
+  },
+  subtitle: {
+    margin: "0",
+    color: "#666",
+    fontSize: "16px",
+  },
 };
 
 export default LoginForm;
