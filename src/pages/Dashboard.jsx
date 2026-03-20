@@ -1,36 +1,15 @@
-import { useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
-import FilterBar from "../components/filters/FilterBar";
-import CoffeeList, { SAMPLE_CAFES } from "../components/CoffeeList";
-import { useFilters } from "../context/FilterContext";
+
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { filters } = useFilters();
 
-  // Calcular cantidad de cafés filtrados
-  const filteredCount = useMemo(() => {
-    let count = SAMPLE_CAFES.length;
-
-    if (filters.availability) {
-      count = SAMPLE_CAFES.filter((c) => c.available).length;
-    }
-
-    return count;
-  }, [filters]);
-
-  return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>☕ Bienvenida {user?.name}</h1>
-        <p style={styles.subtitle}>Explora nuestro catálogo de cafés</p>
-      </div>
-
-      <FilterBar totalCafes={SAMPLE_CAFES.length} filteredCafes={filteredCount} />
-
-      <CoffeeList />
-    </div>
-  );
+   return (
+    <div>
+      <h1>Bienvenida {user?.name}</h1>
+      <p>Este es tu dashboard ☕</p>
+   </div>
+ );
 };
 
 const styles = {
@@ -54,4 +33,4 @@ const styles = {
   },
 };
 
-export default Dashboard;
+export default LoginForm;
