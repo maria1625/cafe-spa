@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-medium: var(--brand-medium);
+  --color-brand-light: var(--brand-light);
+  --color-brand-beige: var(--brand-card);
+  --color-brand-bg: var(--brand-bg);
+  
+  --font-plus: 'Plus Jakarta Sans', sans-serif;
+
+  --animate-bounce-slow: bounce 3s infinite;
+  --animate-slide-left: slideLeft 0.3s ease-out;
+
+  @keyframes slideLeft {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  --animate-fade-in: fadeIn 0.3s ease-out;
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  --animate-scale-in: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  @keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+}
+
+/* SISTEMA DE VARIABLES DINÁMICAS */
+:root {
+  /* MODO CLARO */
+  --brand-bg: #F5F2F0;
+  --brand-dark: #3E2723;
+  --brand-medium: #6D4C41;
+  --brand-light: #D7CCC8;
+  --brand-card: #FFFFFF;
+  --nav-bg: #3E2723;
+  
+  --text-main: #3E2723;
+  --text-sub: #6D4C41;
+  
+  /* Colores de Botón en Modo Claro */
+  --btn-bg: #6D4C41;
+  --btn-text: #FFFFFF;
+  --btn-hover-bg: #3E2723;
+  --btn-hover-text: #FFFFFF;
+}
+
+:root.dark {
+  /* MODO OSCURO - CONTRASTE MÁXIMO */
+  --brand-bg: #000000;
+  --brand-dark: #FFFFFF;
+  --brand-medium: #E2D9D5;
+  --brand-light: #333333;
+  --brand-card: #111111;
+  --nav-bg: #050505;
+  
+  --text-main: #FFFFFF;
+  --text-sub: #E2D9D5;
+
+  /* Colores de Botón en Modo Oscuro (Invertidos para visibilidad) */
+  --btn-bg: #FFFFFF;
+  --btn-text: #000000;
+  --btn-hover-bg: #E2D9D5;
+  --btn-hover-text: #000000;
+}
+
+/* ESTILOS GLOBALES */
+:root {
+  background-color: var(--brand-bg);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.4s ease;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--brand-bg);
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text-main) !important;
+    @apply font-black tracking-tight transition-colors duration-300;
+  }
+  
+  p, span, label, div:not([class*="btn-"]):not([class*="nav-"]) {
+    @apply transition-colors duration-300;
+  }
+
+  /* Forzar visibilidad de textos en dark mode */
+  .dark p, .dark span, .dark label {
+    color: var(--text-sub);
+  }
+}
+
+@layer components {
+  /* Navbar Dinámica */
+  .nav-premium {
+    background-color: var(--nav-bg) !important;
+    @apply flex justify-between items-center px-6 sm:px-16 py-6 text-white shadow-2xl sticky top-0 z-50 transition-all duration-500;
+  }
+
+  /* Tarjetas Dinámicas */
+  .card-premium {
+    background-color: var(--brand-card) !important;
+    border: 1px solid var(--brand-light) !important;
+    @apply rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500;
+  }
+  
+  /* Inputs Dinámicos */
+  .input-premium {
+    background-color: var(--brand-bg) !important;
+    color: var(--text-main) !important;
+    border: 2px solid var(--brand-light) !important;
+    @apply w-full p-5 rounded-2xl focus:ring-4 focus:ring-brand-medium/20 focus:outline-none transition-all duration-300;
+  }
+  
+  /* Botones Premium - Texto e Iconos Dinámicos */
+  .btn-premium {
+    background-color: var(--btn-bg) !important;
+    color: var(--btn-text) !important;
+    @apply font-black py-5 px-8 rounded-2xl shadow-xl 
+           active:scale-95 transition-all duration-300 
+           flex justify-center items-center gap-3 uppercase tracking-widest text-xs;
+  }
+
+  .btn-premium:hover {
+    background-color: var(--btn-hover-bg) !important;
+    color: var(--btn-hover-text) !important;
+  }
+
+  /* Asegurar que los iconos dentro de los botones hereden el color del texto */
+  .btn-premium svg {
+    color: inherit !important;
+    stroke: currentColor !important;
+  }
+
+  .card-info-box {
+    background-color: var(--brand-bg) !important;
+    border: 1px solid var(--brand-light) !important;
+    @apply flex flex-col p-4 rounded-2xl;
+  }
+
+  .badge-unavailable {
+    @apply absolute top-6 left-6 bg-red-600 text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full z-10;
+  }
+}
