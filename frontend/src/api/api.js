@@ -20,12 +20,12 @@ api.interceptors.request.use((config) => {
 // Separando funciones de consumo
 export const authApi = {
   login: async (credentials) => {
-    const response = await api.post("/auth/login", credentials);
+    const response = await api.post("/v1/auth/login", credentials);
     return response.data;
   },
   
   register: async (userData) => {
-    const response = await api.post("/auth/register", userData);
+    const response = await api.post("/v1/auth/register", userData);
     return response.data;
   },
 };

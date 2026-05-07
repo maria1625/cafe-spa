@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { authApi } from '../api/api';
 
-// Función para obtener el usuario de forma segura
 const getStoredUser = () => {
   try {
     const stored = localStorage.getItem('cafe_user');
@@ -22,9 +21,9 @@ export const useAuthStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await authApi.login(credentials);
-      // El backend debería devolver { user: {...}, token: '...' } o similar
-      const userData = response.user || response;
-      if (response.token) userData.token = response.token;
+      const userData = response.data?.data?.user || response.data?.user || response.user || response;
+      const token = response.data?.data?.token || response.data?.token || response.token;
+      if (token) userData.token = token;
       
       localStorage.setItem('cafe_user', JSON.stringify(userData));
       set({ user: userData, isAuthenticated: true, loading: false });
@@ -45,8 +44,9 @@ export const useAuthStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await authApi.register(userData);
-      const user = response.user || response;
-      if (response.token) user.token = response.token;
+      const user = response.data?.data?.user || response.data?.user || response.user || response;
+      const token = response.data?.data?.token || response.data?.token || response.token;
+      if (token) user.token = token;
       
       localStorage.setItem('cafe_user', JSON.stringify(user));
       set({ user: user, isAuthenticated: true, loading: false });
